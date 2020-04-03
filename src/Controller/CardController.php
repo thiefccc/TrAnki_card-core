@@ -3,6 +3,9 @@
 namespace App\Controller;
 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -14,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CardController extends AbstractFOSRestController
 {
     /**
-     * @Route("/")
+     * @Post("/")
      * @return JsonResponse
      */
     public function create ()
@@ -24,9 +27,9 @@ class CardController extends AbstractFOSRestController
     }
 
     /**
-     * @Route("/get/{deckId}")
+     * @Get("/get/{deckId}")
      */
-    public function getCards(int $deckId) {
+    public function getCards(int $deckId, LoggerInterface $consoleLogger) {
         $cardsFromDb = [
             [
                 'id' => 1,
@@ -44,8 +47,10 @@ class CardController extends AbstractFOSRestController
             ],
         ];
 
+        $consoleLogger->info('dick arr');
+
         $cards = array_filter($cardsFromDb, function($elem) use ($deckId) {return $elem['deck_id'] === $deckId; });
 
-        return new JsonResponse($cards);
+        return $this->json($cards);
     }
 }
