@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\CardType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 /**
@@ -19,12 +20,25 @@ class CardTypeRepository extends ServiceEntityRepository
      * @var AdapterInterface
      */
     private $cache;
+    /**
+     * @var ManagerRegistry
+     */
+    private $registry;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
-    public function __construct(ManagerRegistry $registry, AdapterInterface $cache)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        EntityManagerInterface $entityManager,
+        AdapterInterface $cache
+    ) {
         parent::__construct($registry, CardType::class);
 
         $this->cache = $cache;
+        $this->registry = $registry;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -48,6 +62,13 @@ class CardTypeRepository extends ServiceEntityRepository
         }
 
         return $item->get();
+    }
+
+    public function save(CardType $cardType): void
+    {
+        $objectManager = $this->registry->getManager();
+        $objectManager->persist($cardType);
+        $objectManager->flush();
     }
 
     /*

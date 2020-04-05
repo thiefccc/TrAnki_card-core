@@ -134,6 +134,9 @@
     "phpoption/phpoption": {
         "version": "1.7.3"
     },
+    "predis/predis": {
+        "version": "v1.1.1"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },

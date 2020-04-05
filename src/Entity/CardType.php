@@ -19,7 +19,7 @@ class CardType
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, unique=true,  nullable=false)
      */
     private $name;
 
@@ -38,7 +38,7 @@ class CardType
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }

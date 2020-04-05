@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,6 +43,27 @@ class Card
      * @ORM\JoinColumn(nullable=false)
      */
     private $type_id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Deck", inversedBy="cards")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $deck;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $time_created;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CardSettings", mappedBy="card", orphanRemoval=true)
+     */
+    private $cardSettings;
+
+    public function __construct()
+    {
+        $this->cardSettings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,6 +126,61 @@ class Card
     public function setTypeId(?CardType $type_id): self
     {
         $this->type_id = $type_id;
+
+        return $this;
+    }
+
+    public function getDeck(): ?Deck
+    {
+        return $this->deck;
+    }
+
+    public function setDeck(?Deck $deck): self
+    {
+        $this->deck = $deck;
+
+        return $this;
+    }
+
+    public function getTimeCreated(): ?\DateTimeInterface
+    {
+        return $this->time_created;
+    }
+
+    public function setTimeCreated(\DateTimeInterface $time_created): self
+    {
+        $this->time_created = $time_created;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CardSettings[]
+     */
+    public function getCardSettings(): Collection
+    {
+        return $this->cardSettings;
+    }
+
+    public function addCardSetting(CardSettings $cardSetting): self
+    {
+        if (!$this->cardSettings->contains($cardSetting)) {
+            $this->cardSettings[] = $cardSetting;
+            $cardSetting->setCard($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCardSetting(CardSettings $cardSetting): self
+    {
+        if ($this->cardSettings->contains($cardSetting)) {
+            $this->cardSettings->removeElement($cardSetting);
+            // set the owning side to null (unless already changed)
+            if ($cardSetting->getCard() === $this) {
+                $cardSetting->setCard(null);
+            }
+        }
 
         return $this;
     }
