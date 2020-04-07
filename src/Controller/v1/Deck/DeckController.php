@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Deck;
+namespace App\Controller\v1\Deck;
 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 

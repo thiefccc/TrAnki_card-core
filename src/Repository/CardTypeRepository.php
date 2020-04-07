@@ -24,21 +24,17 @@ class CardTypeRepository extends ServiceEntityRepository
      * @var ManagerRegistry
      */
     private $registry;
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
 
     public function __construct(
         ManagerRegistry $registry,
-        EntityManagerInterface $entityManager,
         AdapterInterface $cache
     ) {
         parent::__construct($registry, CardType::class);
 
+        // TODO make cache for requests
         $this->cache = $cache;
+
         $this->registry = $registry;
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -52,8 +48,6 @@ class CardTypeRepository extends ServiceEntityRepository
             $result = $this->createQueryBuilder('c')
                 ->andWhere('c.name = :val')
                 ->setParameter('val', $name)
-//                ->orderBy('c.id', 'ASC')
-//                ->setMaxResults(10)
                 ->getQuery()
                 ->getResult();
 
@@ -64,10 +58,23 @@ class CardTypeRepository extends ServiceEntityRepository
         return $item->get();
     }
 
+    /**
+     * @param CardType $cardType
+     */
     public function save(CardType $cardType): void
     {
         $objectManager = $this->registry->getManager();
         $objectManager->persist($cardType);
+        $objectManager->flush();
+    }
+
+    /**
+     * @param CardType $cardType
+     */
+    public function delete(CardType $cardType): void
+    {
+        $objectManager = $this->registry->getManager();
+        $objectManager->remove($cardType);
         $objectManager->flush();
     }
 

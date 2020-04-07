@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Controller\Card;
+namespace App\Controller\v1\Card;
 
 use App\Entity\Card;
-use App\Service\CardService;
+use App\Service\v1\CardService;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
@@ -29,10 +29,10 @@ class CardController extends AbstractFOSRestController
     }
 
     /**
-     * @Post()
+     * @Post(name="add_card")
      * @return JsonResponse
      */
-    public function create ()
+    public function createCard()
     {
         $data = ['message' => 'Try to create car Card'];
         $card = new Card();
@@ -42,7 +42,7 @@ class CardController extends AbstractFOSRestController
     }
 
     /**
-     * @Get("/get/{deckId}")
+     * @Get("/{deckId}", name="get_card_by_id")
      */
     public function getCards(int $deckId) {
         $cardsFromDb = [

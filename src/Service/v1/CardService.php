@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\v1;
 
 use App\Entity\Card;
 use App\Repository\CardRepository;
