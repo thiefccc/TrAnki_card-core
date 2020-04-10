@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,16 +21,6 @@ class CardType
      */
     private $name;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Card", mappedBy="type_id")
-     */
-    private $card_id;
-
-    public function __construct()
-    {
-        $this->card_id = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -50,34 +38,8 @@ class CardType
         return $this;
     }
 
-    /**
-     * @return Collection|Card[]
-     */
-    public function getCardId(): Collection
+    public function __toString()
     {
-        return $this->card_id;
-    }
-
-    public function addCardId(Card $cardId): self
-    {
-        if (!$this->card_id->contains($cardId)) {
-            $this->card_id[] = $cardId;
-            $cardId->setTypeId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCardId(Card $cardId): self
-    {
-        if ($this->card_id->contains($cardId)) {
-            $this->card_id->removeElement($cardId);
-            // set the owning side to null (unless already changed)
-            if ($cardId->getTypeId() === $this) {
-                $cardId->setTypeId(null);
-            }
-        }
-
-        return $this;
+        return (string) $this->name;
     }
 }

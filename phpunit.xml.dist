@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         colors="true"
-         bootstrap="tests/bootstrap.php"
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+        colors="true"
+        bootstrap="tests/bootstrap.php"
 >
+    <!--         bootstrap="tests/bootstrap.php"-->
+
     <php>
         <ini name="error_reporting" value="-1" />
-        <server name="APP_ENV" value="test" force="true" />
+<!--        <server name="APP_ENV" value="test" force="true" />-->
         <server name="SHELL_VERBOSITY" value="-1" />
 
-        <env name="API_TEST_BASE_URI" value="http://localhost:8000" />
-        <env name="DATABASE_URL"
-             value="mysql://root:root@localhost:3306/tranki_test?serverVersion=5.7" />
+        <env name="APP_ENV" value="test" force="true" />
+        <env name="API_TEST_BASE_URI" value="http://localhost:8000" force="true" />
+        <env name="DATABASE_URL" value="mysql://root:root@localhost:3306/tranki_test?serverVersion=5.7" force="true"  />
     </php>
 
     <testsuites>

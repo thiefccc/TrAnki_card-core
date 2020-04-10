@@ -4,12 +4,16 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    cache_adapter: cache.adapter.filesystem
 
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        # Custom
+        bind:
+            $customLogger: '@monolog.logger.custom'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -22,7 +26,10 @@ services:
     App\Controller\v1\:
         resource: '../src/Controller/v1'
         tags: ['controller.service_arguments']
-#        prefix: '\v1\'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+#    App\Service\v1\CardTypeService:
+#        arguments:
+#            $logger: '@monolog.logger.custom'

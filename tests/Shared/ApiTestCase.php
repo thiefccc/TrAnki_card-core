@@ -2,9 +2,9 @@
 
 namespace App\Tests\Shared;
 
-use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Symfony\Component\HttpClient\HttpClient;
 
 class ApiTestCase extends KernelTestCase
 {
@@ -16,12 +16,16 @@ class ApiTestCase extends KernelTestCase
     {
         self::bootKernel();
 
-        self::$staticClient = new Client([
-            'base_uri' => getenv('API_TEST_BASE_URI'),
-            'defaults' => [
-                'exceptions' => false
-            ]
-        ]);
+        self::$staticClient = HttpClient::createForBaseUri(
+            getenv('API_TEST_BASE_URI')
+        );
+
+//        self::$staticClient = new Client([
+//            'base_uri' => getenv('API_TEST_BASE_URI'),
+//            'defaults' => [
+//                'exceptions' => false
+//            ]
+//        ]);
     }
 
     protected function setUp()

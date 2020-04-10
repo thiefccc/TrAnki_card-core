@@ -3,37 +3,48 @@
 namespace App\Service\v1;
 
 use App\Entity\CardType;
-use App\Repository\CardTypeRepository;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Component\Form\FormInterface;
 
 class CardTypeService
 {
     /**
-     * @var CardTypeRepository
+     * @var Serializer
      */
-    private $cardTypeRepository;
+    private $jmsSerializer;
 
     /**
      * @codeCoverageIgnore
      */
-    public function __construct(CardTypeRepository $cardTypeRepository)
+    public function __construct(SerializerInterface $jmsSerializer)
     {
-        $this->cardTypeRepository = $cardTypeRepository;
+        $this->jmsSerializer = $jmsSerializer;
     }
 
     /**
      * @param CardType $cardType
-     * @return array
+     * @return string
      */
-    public function serializeCardType(CardType $cardType): array
+    public function serializeCardType(CardType $cardType)
     {
-        return [
-            'id' => $cardType->getId(),
-            'name' => $cardType->getName(),
-        ];
+        return $this->jmsSerializer->serialize($cardType, 'json');
     }
 
-    public function processForm(string $requestContent, FormInterface $form)
+    /**
+     * @param array $cardTypes
+     * @return string
+     */
+    public function serializeCardTypes(array $cardTypes)
+    {
+        return $this->jmsSerializer->serialize($cardTypes, 'json');
+    }
+
+    /**
+     * @param string $requestContent
+     * @param FormInterface $form
+     */
+    public function processForm(string $requestContent, FormInterface $form): void
     {
         $data = json_decode($requestContent, true);
         $form->submit($data);

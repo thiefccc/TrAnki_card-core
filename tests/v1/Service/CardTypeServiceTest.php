@@ -4,57 +4,114 @@ namespace App\Tests\v1\Service;
 
 use App\Entity\CardType;
 use App\Repository\CardTypeRepository;
+use App\Service\Shared\SlackClient;
 use App\Service\v1\CardTypeService;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @coversDefaultClass \App\Service\v1\CardTypeService
  */
 class CardTypeServiceTest extends TestCase
 {
-    private $cardTypeRepository;
+    /**
+     * @var CardTypeService
+     */
     private $cardTypeService;
+    /**
+     * @var SerializerInterface|null
+     */
+    private $serializer;
+
+    protected function getService($id)
+    {
+        return self::$kernel->getContainer()->get($id);
+    }
 
     protected function setUp()
     {
-        $this->cardTypeRepository =
-            $this->createMock(CardTypeRepository::class);
+        $this->serializer = $this->getMockBuilder(SerializerInterface::class)
+            ->getMock();
 
-        $this->cardTypeService = new CardTypeService($this->cardTypeRepository);
+        $this->cardTypeService = new CardTypeService($this->serializer);
     }
 
-    public function dataSirializeCardType()
+    public function dataSerializeCardType(): array
     {
         return [
             'serialize simple card type' => [
                 'id' => 1,
                 'name' => 'text',
-                'expected' => [
-                    'id' => 1,
-                    'name' => 'text',
-                ]
             ],
         ];
     }
 
     /**
-     * @dataProvider dataSirializeCardType
+     * @dataProvider dataSerializeCardType
      * @covers ::serializeCardType
      */
     public function testSirializeCardType(
         $cardId,
-        $cardName,
-        $expectedSerializedCard
+        $cardName
     ) {
         $cardType = new CardType();
         $this->set($cardType, $cardId);
         $cardType->setName($cardName);
 
-        $this->assertSame(
-            $expectedSerializedCard,
-            $this->cardTypeService->serializeCardType($cardType)
+        $this->serializer
+            ->expects($this->once())
+            ->method('serialize');
+
+        $this->cardTypeService->serializeCardType($cardType);
+    }
+
+    /**
+     * @dataProvider dataSerializeCardType
+     * @covers ::serializeCardTypes
+     */
+    public function testSirializeCardTypes(
+        $cardId,
+        $cardName
+    ) {
+//        $cardType = new CardType();
+//        $this->set($cardType, $cardId);
+//        $cardType->setName($cardName);
+//
+//        $cardTypes[] = $cardType;
+//
+//        $cardType = new CardType();
+//        $this->set($cardType, $cardId + 1);
+//        $cardType->setName($cardName);
+//
+//        $cardTypes[] = $cardType;
+
+        $cardTypes[] = new CardType();
+        $cardTypes[] = new CardType();
+
+        $this->serializer
+            ->expects($this->once())
+            ->method('serialize');
+
+        $this->cardTypeService->serializeCardTypes($cardTypes);
+    }
+
+    public function testProessForm()
+    {
+        $formMock = $this->getMockBuilder(FormInterface::class)
+            ->getMock();
+
+        $formMock->expects($this->once())->method('submit')->with(
+            $this->identicalTo(
+                json_decode('{"CardTypeObjectData": 1}', true)
+            )
         );
+
+        $this->cardTypeService->processForm('{"CardTypeObjectData": 1}', $formMock);
     }
 
     public function set($entity, $value, $propertyName = 'id')

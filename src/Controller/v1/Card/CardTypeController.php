@@ -11,7 +11,6 @@ use FOS\RestBundle\Controller\Annotations\Delete;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Put;
-use PHPUnit\Util\Json;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,7 +75,7 @@ class CardTypeController extends AbstractFOSRestController
 
             $response_data = $this->cardTypeService->serializeCardType($cardType);
 
-            $request = new JsonResponse($response_data, Response::HTTP_CREATED);
+            $request = new JsonResponse($response_data, Response::HTTP_CREATED, [], true);
             $request->headers->set('Location', $cardTypeUrl);
             return $request;
         } catch (\Exception $e) {
@@ -86,6 +85,7 @@ class CardTypeController extends AbstractFOSRestController
 
     /**
      * @Put("/{cardTypeId<\d+>}", name="update_card_type")
+     * @codeCoverageIgnore
      */
     public function updateCardType($cardTypeId, Request $request)
     {
@@ -104,11 +104,12 @@ class CardTypeController extends AbstractFOSRestController
 
         $this->cardTypeRepository->save($cardType);
         $response_data = $this->cardTypeService->serializeCardType($cardType);
-        return new JsonResponse($response_data, Response::HTTP_OK);
+        return new JsonResponse($response_data, Response::HTTP_OK, [], true);
     }
 
     /**
      * @Delete("/{cardTypeId<\d+>}", name="delete_card_type")
+     * @codeCoverageIgnore
      */
     public function deleteCardType($cardTypeId)
     {
@@ -123,6 +124,7 @@ class CardTypeController extends AbstractFOSRestController
 
     /**
      * @Get(name="get_all_card_types")
+     * @codeCoverageIgnore
      */
     public function getAllCardTypes()
     {
@@ -132,16 +134,13 @@ class CardTypeController extends AbstractFOSRestController
             return new JsonResponse('No one Card type haven\'t been found', Response::HTTP_NOT_FOUND);
         }
 
-        $data = [];
-        foreach ($cardTypes as $cardType) {
-            $data['card_types'][] = $this->cardTypeService->serializeCardType($cardType);
-        }
-
-        return new JsonResponse($data,Response::HTTP_FOUND);
+        $data = $this->cardTypeService->serializeCardTypes(['card_types' => $cardTypes]);
+        return new JsonResponse($data,Response::HTTP_FOUND, [], true);
     }
 
     /**
      * @Get("/{cardTypeId<\d+>}", name="get_card_type_by_id")
+     * @codeCoverageIgnore
      * @return object|void
      */
     public function getCardTypeById($cardTypeId)
@@ -156,11 +155,12 @@ class CardTypeController extends AbstractFOSRestController
         // TODO serialize objects with appropriate service
         $data = $this->cardTypeService->serializeCardType($cardType);
 
-        return new JsonResponse($data,Response::HTTP_FOUND);
+        return new JsonResponse($data,Response::HTTP_FOUND, [], true);
     }
 
     /**
      * @Get("/{cardTypeName<[a-zA-Z]+>}", name="get_card_type_by_name")
+     * @codeCoverageIgnore
      * @return object|void
      */
     public function getCardTypeByName($cardTypeName)
@@ -175,7 +175,7 @@ class CardTypeController extends AbstractFOSRestController
                 'name' => $cardType->getName(),
             ];
 
-            return new JsonResponse($data,Response::HTTP_FOUND);
+            return new JsonResponse($data,Response::HTTP_FOUND, [], true);
         } else {
             return new JsonResponse('Card type (Name: ' . $cardTypeName . ') hasn\'t been found', Response::HTTP_NOT_FOUND);
         }

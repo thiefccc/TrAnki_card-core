@@ -31,12 +31,12 @@ class Card
     /**
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
-    private $front_formating;
+    private $front_formatting;
 
     /**
      * @ORM\Column(type="string", length=1000, nullable=true)
      */
-    private $back_formating;
+    private $back_formatting;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\CardType", inversedBy="card_id")
@@ -94,26 +94,26 @@ class Card
         return $this;
     }
 
-    public function getFrontFormating(): ?string
+    public function getFrontFormatting(): ?string
     {
-        return $this->front_formating;
+        return $this->front_formatting;
     }
 
-    public function setFrontFormating(?string $front_formating): self
+    public function setFrontFormating(?string $front_formatting): self
     {
-        $this->front_formating = $front_formating;
+        $this->front_formatting = $front_formatting;
 
         return $this;
     }
 
-    public function getBackFormating(): ?string
+    public function getBackFormatting(): ?string
     {
-        return $this->back_formating;
+        return $this->back_formatting;
     }
 
-    public function setBackFormating(?string $back_formating): self
+    public function setBackFormatting(?string $back_formatting): self
     {
-        $this->back_formating = $back_formating;
+        $this->back_formatting = $back_formatting;
 
         return $this;
     }

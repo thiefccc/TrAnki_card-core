@@ -24,6 +24,10 @@ class CardTypeRepository extends ServiceEntityRepository
      * @var ManagerRegistry
      */
     private $registry;
+    /**
+     * @var \Doctrine\Persistence\ObjectManager
+     */
+    private $objectManager;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -33,8 +37,8 @@ class CardTypeRepository extends ServiceEntityRepository
 
         // TODO make cache for requests
         $this->cache = $cache;
-
         $this->registry = $registry;
+        $this->objectManager = $this->registry->getManager();
     }
 
     /**
@@ -63,9 +67,21 @@ class CardTypeRepository extends ServiceEntityRepository
      */
     public function save(CardType $cardType): void
     {
-        $objectManager = $this->registry->getManager();
-        $objectManager->persist($cardType);
-        $objectManager->flush();
+        $this->objectManager->persist($cardType);
+        $this->objectManager->flush();
+    }
+
+    /**
+     * @param CardType $cardType
+     */
+    public function saveUncommitted(CardType $cardType): void
+    {
+        $this->objectManager->persist($cardType);
+    }
+
+    public function commit(): void
+    {
+        $this->objectManager->flush();
     }
 
     /**
